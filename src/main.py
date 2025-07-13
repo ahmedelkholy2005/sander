@@ -20,11 +20,14 @@ app.register_blueprint(user_bp, url_prefix='/api')
 app.register_blueprint(email_bp, url_prefix='/api')
 
 # uncomment if you need to use database
-app.config['SQLALCHEMY_DATABASE_URI'] = f"sqlite:///{os.path.join(os.path.dirname(__file__), 'database', 'app.db')}"
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+app.config["SQLALCHEMY_DATABASE_URI"] = os.environ.get(
+    "DATABASE_URL", 
+    f"sqlite:///{os.path.join(os.getcwd(), 'app.db')}" # Fallback for local development
+)
+app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 db.init_app(app)
 with app.app_context():
-    db.create_all()
+    db.create_all() 
 
 @app.route('/', defaults={'path': ''})
 @app.route('/<path:path>')
